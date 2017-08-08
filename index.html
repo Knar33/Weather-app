@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <title>Weather</title>
+</head>
+    
+    <body>
+        <form onsubmit="processForm(this); return false;">
+            Enter your location:<br>
+            <input type="text" name="city" id="city">
+            <input type="submit">
+            <div id="result">
+            </div>
+        </form>
+        <script>
+            function processForm(form) {
+                var input = "https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"" + form[0].value + "\")&format=json&env=store://datatables.org/alltableswithkeys"
+                $.getJSON(input, function(jd) { 
+                    console.log(jd);
+                    $("#result").empty();
+                    
+                    //current weather conditions
+                    var htmlInput = 
+                        "" + 
+                        ""
+                    ;
+                    
+                    //10 day forecast
+                });
+            }
+        </script>
+    </body>
+</html>
