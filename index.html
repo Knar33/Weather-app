@@ -4,31 +4,155 @@
     <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
     <title>Weather</title>
 </head>
     
     <body>
-        <form onsubmit="processForm(this); return false;">
-            Enter your location:<br>
-            <input type="text" name="city" id="city">
-            <input type="submit">
-            <div id="result">
+        <div class="container-fluid">
+            <div class="row" id="main" style="margin: 10em 0;">
+                <div class="col-md-offset-3 col-md-6 mainContainer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Enter your location:<br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <form onsubmit="processForm(this); return false;">
+                                <input type="text" name="city" id="city" class="locInput" style="width: 100%">
+                        </div>
+                        <div class="col-md-2">
+                                <input type="submit" style="width: 100%;" class="mainSubmit">
+                                <div id="result">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="dynamicContainer">
+                    
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>   
+        
         <script>
             function processForm(form) {
                 var input = "https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"" + form[0].value + "\")&format=json&env=store://datatables.org/alltableswithkeys"
                 $.getJSON(input, function(jd) { 
-                    console.log(jd);
                     $("#result").empty();
+                    console.log(jd);
                     
-                    //current weather conditions
-                    var htmlInput = 
-                        "" + 
-                        ""
-                    ;
+                    var channel = jd.query.results.channel;
+                    var item = channel.item;
                     
-                    //10 day forecast
+                    var htmlInput = '' +
+                    '<div class="row">' +
+                        '<div class="col-xs-6">' +
+                            '<div class="row">' +
+                                '<div class="col-md-12">' +
+                                    '<h1>' + item.condition.temp + '&#176;' + channel.units.temperature + '</h1><h4>' +
+                                    item.condition.text + '</h4><h4>' +
+                                    'High: ' + item.forecast[0].high + ' | Low : ' + item.forecast[0].low +'</h4>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="col-xs-6 text-right"><h4>' +
+                            channel.location.city + ', ' + channel.location.region + '</h4><h4>' +
+                            channel.location.country + '</h4><h4>' +
+                            channel.lastBuildDate + '</h4>' +
+                        '</div>' +
+                    '</div>' + 
+                    '<div class="row">' +
+                        '<div class="col-md-12">' +
+                            '<button class="btn tabz" type="button" data-toggle="collapse" data-target="#wind" aria-expanded="false" aria-controls="wind">' +
+                                'Wind' +
+                            '</button>' +
+                            '<div class="collapse" id="wind">    ' + 
+                                'Chill: ' + channel.wind.chill + ' ' + channel.units.temperature + '<br>' +
+                                'Direction: ' + channel.wind.direction + '<br>' +
+                                'speed: ' + channel.wind.chill + ' ' + channel.units.speed + '<br>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-12">' +
+                            '<button class="btn tabz" type="button" data-toggle="collapse" data-target="#atmosphere" aria-expanded="false" aria-controls="atmosphere">' +
+                                'Atmosphere' +
+                            '</button>' +
+                            '<div class="collapse" id="atmosphere">' + 
+                                'Humidity: ' + channel.atmosphere.humidity + ' ' + channel.units.temperature + '<br>' +
+                                'Pressure: ' + channel.atmosphere.pressure + '<br>' +
+                                'Rising: ' + channel.atmosphere.rising + '<br>' +
+                                'Visibility: ' + channel.atmosphere.visibility   + '<br>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<div class="col-md-12">' +
+                            '<button class="btn tabz" type="button" data-toggle="collapse" data-target="#astronomy" aria-expanded="false" aria-controls="astronomy">' +
+                                'Astronomy' +
+                            '</button>' +
+                            '<div class="collapse" id="astronomy">' + 
+                                'Sunrise: ' + channel.astronomy.sunrise + '<br>' +
+                                'Sunset: ' + channel.astronomy.sunset + '<br>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                        
+                    for (i = 0; i < 10; i++) {
+                        htmlInput += '<div class="row">' + 
+                            '<div class="col-xs-12">' +  
+                                '<span class="forecastSpan">' +
+                                    '<img src="http://l.yimg.com/a/i/us/we/52/' + item.forecast[i].code + '.gif">' +
+                                '</span>' +
+                                '<span class="forecastSpan">' +
+                                    item.forecast[i].date +
+                                '</span>' +
+                                '<span class="forecastSpan">' +
+                                    'high: ' + item.forecast[i].high + ' | low: ' + item.forecast[i].low +
+                                '</span>' + 
+                            '</div>' +
+                        '</div>';
+                    }
+                    var bgimage = "";
+                    
+                    switch(item.condition.code){
+                        case "27":
+                        case "28":
+                        case "29":
+                        case "30":
+                            bgImage = "bg1";
+                            break;
+                        case "13":
+                        case "14":
+                        case "15":
+                        case "16":
+                        case "17":
+                        case "40":
+                        case "41":
+                        case "42":
+                        case "43":
+                        case "44":
+                        case "46":
+                            bgImage = "bg2";
+                            break;
+                        case "31":
+                        case "32":
+                        case "33":
+                        case "34":
+                        case "36":
+                            bgImage = "bg3";
+                            break;
+                        default:
+                            bgImage = "bg4";
+                            break;
+                    }
+                    
+                    $(".dynamicContainer")[0].innerHTML = htmlInput;
+                    $("#main").css("margin", "1em 0");
+                    $("body").css("background-image", "url('images/" + bgImage + ".jpg')");
                 });
             }
         </script>
