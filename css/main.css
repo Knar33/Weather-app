@@ -24,6 +24,9 @@
     margin: 5px;
 }
 
+.margined2 {
+    margin: 1em 0;
+}
 .tabz {
     border: 1px solid black;
     width: 100%;
